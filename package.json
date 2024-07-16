@@ -29,6 +29,7 @@
     "web-ext": "^7.8.0"
   },
   "dependencies": {
+    "base64url": "^3.0.1",
     "webextension-polyfill": "^0.10.0"
   }
 }
