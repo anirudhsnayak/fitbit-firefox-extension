@@ -2,6 +2,10 @@
   import logo from "~/assets/logo.svg";
 
   const logoImageUrl = new URL(logo, import.meta.url).href;
+
+  function nuke(){
+
+  }
 </script>
 
 <div class="logo">

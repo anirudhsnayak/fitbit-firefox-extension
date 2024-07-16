@@ -8,7 +8,7 @@ const manifest = {
   content_scripts: [
     {
       js: ["src/entries/contentScript/primary/main.ts"],
-      matches: ["*://*/*"],
+      matches: ["https://anirudhsnayak.github.io/"],
     },
   ],
   chrome_url_overrides: {

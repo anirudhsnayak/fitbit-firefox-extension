@@ -14,7 +14,7 @@ export class FitbitAPI {
             + "&scope=activity+cardio_fitness+electrocardiogram+heartrate+location+nutrition+oxygen_saturation+profile+respiratory_rate+settings+sleep+social+temperature+weight"
             + "&code_challenge=" + pseudocode
             + "&code_challenge_method=S256"
-            + "&redirect_uri=https%3A%2F%2Fgithub.com%2Fanirudhsnayak%2Ffitbit-firefox-extension"
+            + "&redirect_uri=https%3A%2F%2Fanirudhsnayak.github.io%2F"
         )
     }
     static getAccessToken(code: string){
