@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 import base64url from 'base64url'
 export class FitbitAPI {
-    static code_verifier : crypto.BinaryLike = "";
+    static code_verifier : Buffer;
     accessToken : string = ""
     static initializeOAuth(){
         console.log("test")

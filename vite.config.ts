@@ -3,11 +3,13 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import webExtension from "@samrum/vite-plugin-web-extension";
 import path from "path";
 import { getManifest } from "./src/manifest";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
   return {
     plugins: [
+      nodePolyfills(),
       svelte(),
       webExtension({
         manifest: getManifest(),
