@@ -1,11 +1,17 @@
 <script lang="ts">
+    import { onMount } from "svelte";
   import logo from "~/assets/logo.svg";
+    import { FitbitAPI } from "~/lib/FitbitAPI";
 
   const logoImageUrl = new URL(logo, import.meta.url).href;
 
-  function nuke(){
-
-  }
+let urlParams; 
+onMount(()=>{
+  let args = window.location.search;
+  urlParams = new URLSearchParams(args)
+  let code = urlParams.get("code")!
+  FitbitAPI.getAccessToken(code)
+})
 </script>
 
 <div class="logo">

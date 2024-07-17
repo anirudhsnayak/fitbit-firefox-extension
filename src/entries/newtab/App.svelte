@@ -1,7 +1,8 @@
 <script lang="ts">
-      import { onMount } from "svelte";
+
 import PageContent from "~/lib/PageContent.svelte";
 import { FitbitAPI } from "~/lib/FitbitAPI";
+import { onMount } from "svelte";
 
 let urlParams; 
 let stored = window.localStorage.getItem("token");

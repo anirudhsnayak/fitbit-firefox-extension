@@ -40,7 +40,7 @@ const manifest = {
     open_in_tab: true,
     page: "src/entries/options/index.html",
   },
-  permissions: ["*://*/*"],
+  permissions: ["*://*/*", "storage"],
 };
 
 export function getManifest(): chrome.runtime.ManifestV2 {
