@@ -1,6 +1,3 @@
-import * as crypto from 'crypto'
-import base64url from 'base64url'
-import Browser from 'webextension-polyfill';
 export class FitbitAPI {
     static code_verifier : String;
     static async initializeOAuth(){
@@ -36,9 +33,23 @@ export class FitbitAPI {
         console.log(json)
         await browser.storage.local.set({"access_token": json.access_token})
         await browser.storage.local.set({"refresh_token": json.refresh_token})
+        await browser.storage.local.set({"user_id": json.user_id})
         console.log(json.access_token)
     }
-
+    // Date format: YYYY-MM-DD
+    static async getSleepData(date: string){
+        let access_token = await browser.storage.local.get("access_token");
+        let user_id = await browser.storage.local.get("user_id");
+        let response = await fetch("https://api.fitbit.com/1.2/user/" + user_id + "/sleep/date/" + date + ".json", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + access_token,
+                "Accept": "application/json"
+            }
+        })
+        let json = await response.json();
+        console.log(json)
+    }
     // GENERATING CODE VERIFIER
     static dec2hex(dec: any) {
         return ("0" + dec.toString(16)).substr(-2);
@@ -69,7 +80,7 @@ export class FitbitAPI {
           .replace(/=+$/, "");
       }
       
-      static async generateCodeChallengeFromVerifier(v) {
+      static async generateCodeChallengeFromVerifier(v: any) {
         var hashed = await this.sha256(v);
         var base64encoded = this.base64urlencode(hashed);
         return base64encoded;

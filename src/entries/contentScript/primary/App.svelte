@@ -12,10 +12,15 @@ onMount(()=>{
   let code = urlParams.get("code")!
   FitbitAPI.getAccessToken(code)
 })
+
+function print_sleep_data(){
+  FitbitAPI.getSleepData("2024-07-16")
+}
 </script>
 
 <div class="logo">
   <img src={logoImageUrl} height="50" alt="" />
+  <button on:click={print_sleep_data}></button>
 </div>
 
 <style>
