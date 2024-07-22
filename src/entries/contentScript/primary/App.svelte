@@ -1,27 +1,33 @@
+
 <script lang="ts">
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
   import logo from "~/assets/logo.svg";
-    import { FitbitAPI } from "~/lib/FitbitAPI";
+  import { FitbitAPI } from "~/lib/FitbitAPI";
+  import FitbitGraph from "./FitbitGraph.svelte";
 
   const logoImageUrl = new URL(logo, import.meta.url).href;
 
-let urlParams; 
+  let urlParams; 
+
 onMount(()=>{
   let args = window.location.search;
   urlParams = new URLSearchParams(args)
   let code = urlParams.get("code")!
-  FitbitAPI.getAccessToken(code)
+  renderGraph(code)
 })
+
+async function renderGraph(code: any){
+  await FitbitAPI.getAccessToken(code);
+}
 
 function print_sleep_data(){
   FitbitAPI.getSleepData("2024-07-16")
 }
 </script>
 
-<div class="logo">
-  <img src={logoImageUrl} height="50" alt="" />
-  <button on:click={print_sleep_data}></button>
-</div>
+<button on:click={print_sleep_data}></button>
+
+<FitbitGraph/>
 
 <style>
   .logo {

@@ -1,4 +1,20 @@
 export class FitbitAPI {
+    static init = false;
+    static callback_list : Function[] = [];
+    static subscribe(callback: Function){
+        if(this.init){
+            callback();
+        } else {
+            this.callback_list.push(callback);
+        }
+    }
+    static update(){
+        this.init = true;
+        for(let callback of this.callback_list){
+            callback();
+        }
+        this.callback_list = [];
+    }
     static code_verifier : String;
     static async initializeOAuth(){
         this.code_verifier = this.generateCodeVerifier()
@@ -35,12 +51,13 @@ export class FitbitAPI {
         await browser.storage.local.set({"refresh_token": json.refresh_token})
         await browser.storage.local.set({"user_id": json.user_id})
         console.log(json.access_token)
+        this.update();
     }
     // Date format: YYYY-MM-DD
-    static async getSleepData(date: string){
-        let access_token = await browser.storage.local.get("access_token");
-        let user_id = await browser.storage.local.get("user_id");
-        let response = await fetch("https://api.fitbit.com/1.2/user/" + user_id + "/sleep/date/" + date + ".json", {
+    static async getSleepData(date_string: string){
+        let access_token = (await browser.storage.local.get("access_token"))["access_token"];
+        let user_id =(await browser.storage.local.get("user_id"))["access_token"];
+        let response = await fetch("https://api.fitbit.com/1.2/user/-/sleep/date/" + date_string + ".json", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + access_token,
@@ -49,11 +66,18 @@ export class FitbitAPI {
         })
         let json = await response.json();
         console.log(json)
+        return json;
     }
-    // GENERATING CODE VERIFIER
+
+    static dateString(date: Date){
+        //YYYY-MM-DD
+        return date.getFullYear()+"-"+("0"+date.getMonth()).slice(-2)+"-"+("0"+date.getDate()).slice(-2);
+    }
+
     static dec2hex(dec: any) {
         return ("0" + dec.toString(16)).substr(-2);
     }
+
     static generateCodeVerifier() {
         var array = new Uint32Array(112 / 2);
         window.crypto.getRandomValues(array);
@@ -65,9 +89,9 @@ export class FitbitAPI {
         const encoder = new TextEncoder();
         const data = encoder.encode(plain);
         return window.crypto.subtle.digest("SHA-256", data);
-      }
+    }
       
-      static base64urlencode(a: any) {
+    static base64urlencode(a: any) {
         var str = "";
         var bytes = new Uint8Array(a);
         var len = bytes.byteLength;
@@ -78,12 +102,12 @@ export class FitbitAPI {
           .replace(/\+/g, "-")
           .replace(/\//g, "_")
           .replace(/=+$/, "");
-      }
+    }
       
-      static async generateCodeChallengeFromVerifier(v: any) {
+    static async generateCodeChallengeFromVerifier(v: any) {
         var hashed = await this.sha256(v);
         var base64encoded = this.base64urlencode(hashed);
         return base64encoded;
-      }
+    }
 
 } 

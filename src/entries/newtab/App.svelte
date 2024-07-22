@@ -7,14 +7,14 @@ import { onMount } from "svelte";
 let urlParams; 
 let stored = window.localStorage.getItem("token");
 if (stored == null){
-  window.localStorage.setItem("token", "test")
+  window.localStorage.setItem("token", "test");
 }
 onMount(()=>{
   let args = window.location.search;
-  urlParams = new URLSearchParams(args)
+  urlParams = new URLSearchParams(args);
 })
 function test(){
-  FitbitAPI.initializeOAuth()
+  FitbitAPI.initializeOAuth();
 }
 </script>
 
