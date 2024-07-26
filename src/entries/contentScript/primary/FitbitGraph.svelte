@@ -23,19 +23,18 @@
     PointElement,
     CategoryScale
   );
-
   
   let data: ChartData<"line", (number | Point)[], unknown>;
   $: data;
 
   let sleep_data : any[] = [];
-  FitbitAPI.subscribe(() => {
-    loadSleepData(5).then((loaded_data) => {
-        sleep_data = loaded_data;
-        data = renderTotalTimeAsleep();
-        console.log(data)
-    });
-  });
+  (async () => {
+    await FitbitAPI.subscribe();
+    let loaded_data = await loadSleepData(5);
+    sleep_data = loaded_data;
+    data = renderTotalTimeAsleep();
+    console.log(data);
+  })();
 
 async function loadSleepData(tracked_days: number){
     let sleep_data = new Array(tracked_days);

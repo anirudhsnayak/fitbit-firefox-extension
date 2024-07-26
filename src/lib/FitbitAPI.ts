@@ -1,20 +1,7 @@
-export class FitbitAPI {
-    static init = false;
-    static callback_list : Function[] = [];
-    static subscribe(callback: Function){
-        if(this.init){
-            callback();
-        } else {
-            this.callback_list.push(callback);
-        }
-    }
-    static update(){
-        this.init = true;
-        for(let callback of this.callback_list){
-            callback();
-        }
-        this.callback_list = [];
-    }
+import { API } from "~/lib/API";
+export class FitbitAPI extends API{
+
+    static user_profile : JSON | null = null;
     static code_verifier : String;
     static async initializeOAuth(){
         this.code_verifier = this.generateCodeVerifier()
@@ -31,6 +18,11 @@ export class FitbitAPI {
         )
     }
     static async getAccessToken(code: string){
+        let access_token = (await browser.storage.local.get("access_token"))["access_token"];
+        if(access_token != undefined){
+            this.update();
+            return;
+        }
         this.code_verifier = JSON.parse(JSON.stringify(await browser.storage.local.get("code_verifier"))).code_verifier;
         let response = await fetch("https://api.fitbit.com/oauth2/token", {
             method: "POST",
@@ -56,8 +48,27 @@ export class FitbitAPI {
     // Date format: YYYY-MM-DD
     static async getSleepData(date_string: string){
         let access_token = (await browser.storage.local.get("access_token"))["access_token"];
-        let user_id =(await browser.storage.local.get("user_id"))["access_token"];
+        console.log(access_token)
         let response = await fetch("https://api.fitbit.com/1.2/user/-/sleep/date/" + date_string + ".json", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + access_token,
+                "Accept": "application/json"
+            }
+        })
+        let json = await response.json();
+        this.user_profile = json;
+        console.log(json)
+        return json;
+    }
+
+    static async getProfile(){
+        if(this.user_profile != null){
+            return this.user_profile;
+        }
+        let access_token = (await browser.storage.local.get("access_token"))["access_token"];
+        console.log(access_token)
+        let response = await fetch("https://api.fitbit.com/1.2/user/-/profile.json", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + access_token,
@@ -68,6 +79,7 @@ export class FitbitAPI {
         console.log(json)
         return json;
     }
+
 
     static dateString(date: Date){
         //YYYY-MM-DD

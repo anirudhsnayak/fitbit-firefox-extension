@@ -5,19 +5,24 @@
   import { FitbitAPI } from "~/lib/FitbitAPI";
   import FitbitGraph from "./FitbitGraph.svelte";
 
-  const logoImageUrl = new URL(logo, import.meta.url).href;
-
   let urlParams; 
+  let username: string;
 
 onMount(()=>{
   let args = window.location.search;
   urlParams = new URLSearchParams(args)
   let code = urlParams.get("code")!
-  renderGraph(code)
-})
+  FitbitAPI.getAccessToken(code);
+  (async () => {
+    await FitbitAPI.subscribe();
+    let profile = await FitbitAPI.getProfile();
+    console.log(profile);
+    username = "TEST";
+  })();
+});
 
-async function renderGraph(code: any){
-  await FitbitAPI.getAccessToken(code);
+async function set_username(){
+  await FitbitAPI.subscribe()
 }
 
 function print_sleep_data(){
@@ -25,28 +30,19 @@ function print_sleep_data(){
 }
 </script>
 
-<button on:click={print_sleep_data}></button>
+<main class="main">
+  <button on:click={print_sleep_data}></button>
+  <h1>
+    Welcome, {username}
+  </h1>
+  <FitbitGraph/>
+</main>
 
-<FitbitGraph/>
 
 <style>
-  .logo {
-    z-index: 99999;
-    position: fixed;
-    bottom: 20px;
-    right: 10px;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 4px solid #c72a21;
-    border-radius: 50%;
-    background-color: #fff;
-  }
-
-  img {
-    position: absolute;
-    top: 7px;
+  .main{
+    background-color: #1a1f1a;
+    width: 100vw;
+    height: 100vh;
   }
 </style>
